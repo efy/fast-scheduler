@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"time"
@@ -16,15 +17,18 @@ var gauge = promauto.NewGauge(prometheus.GaugeOpts{
 	Help: "download speed measured in Kbps using the fast.com service",
 })
 
+var interval = flag.Int("i", 300, "the interval in secods at which to run test")
+
 func main() {
+	flag.Parse()
+
+	go measure(*interval)
+
 	http.Handle("/metrics", promhttp.Handler())
-
-	go measure()
-
 	http.ListenAndServe(":2112", nil)
 }
 
-func measure() {
+func measure(interval int) {
 	for {
 		f := fast.New()
 
@@ -59,6 +63,6 @@ func measure() {
 			log.Fatal(err)
 		}
 
-		time.Sleep(30 * time.Second)
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
