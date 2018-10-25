@@ -17,7 +17,7 @@ var gauge = promauto.NewGauge(prometheus.GaugeOpts{
 	Help: "download speed measured in Kbps using the fast.com service",
 })
 
-var interval = flag.Int("i", 300, "the interval in secods at which to run test")
+var interval = flag.Int("i", 300, "the interval in seconds at which to run test")
 
 func main() {
 	flag.Parse()
